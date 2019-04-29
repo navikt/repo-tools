@@ -1,0 +1,5 @@
+.idea
+*.iml
+.stack-work
+tmp
+yesod-devel
