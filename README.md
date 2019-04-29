@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/navikt/repo-tools.svg?style=svg)](https://circleci.com/gh/navikt/repo-tools)
+
 # Repo Tools
 
 This project is a web application that is used by developers in NAV to manage GitHub repositories.
