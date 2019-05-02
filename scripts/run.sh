@@ -1,6 +1,6 @@
 #!/bin/sh
 
-file_name="secrets.properties"
+file_name="/opt/app/secrets.properties"
 if [ -f $file_name ]
 then
    echo "Reading env from $file_name"
@@ -10,3 +10,5 @@ then
 fi
 
 /opt/app/bin/repo-tools
+
+sleep 60
