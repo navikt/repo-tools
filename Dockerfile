@@ -12,6 +12,8 @@ COPY frontend/build /opt/app/frontend/build
 
 COPY config /opt/app/config
 
+COPY scripts/run.sh /opt/app/run.sh
+
 EXPOSE 3000
 
-CMD ["/opt/app/bin/repo-tools"]
+CMD ["/opt/app/run.sh"]
