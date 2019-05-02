@@ -1,5 +1,7 @@
 FROM ubuntu:18.04
 
+RUN apt-get -y update && apt-get -y install netbase ca-certificates
+
 RUN mkdir -p /opt/app
 
 WORKDIR /opt/app
