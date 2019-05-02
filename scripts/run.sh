@@ -1,13 +1,9 @@
 #!/bin/sh
 
-file_name="/opt/app/secrets.properties"
-if [ -f $file_name ]
-then
-   echo "Reading env from $file_name"
-   source $file_name
- else
-  echo "$file_name does not exist"
-fi
+export GITHUB_APP_PRIVATE_KEY=$(cat /opt/app/secrets/GITHUB_APP_PRIVATE_KEY)
+export OIDC_DISCOVERY_URL=$(cat /opt/app/secrets/OIDC_DISCOVERY_URL)
+export OIDC_CLIENT_ID=$(cat /opt/app/secrets/OIDC_CLIENT_ID)
+export OIDC_CLIENT_SECRET=$(cat /opt/app/secrets/OIDC_CLIENT_SECRET)
 
 /opt/app/bin/repo-tools
 
