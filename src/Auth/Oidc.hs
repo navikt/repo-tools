@@ -35,7 +35,7 @@ getAuthUrl oidc redirectUrl prompt =
 
 loginUrl :: Route Auth
 loginUrl = PluginR "oidc" ["forward"]
-callbackUrl :: AuthRoute
+callbackUrl :: Route Auth
 callbackUrl = PluginR "oidc" ["callback"]
 
 authOidc :: YesodAuth master
@@ -49,6 +49,10 @@ authOidc oidc =
                  -> [Text]
                  -> AuthHandler site TypedContent
         dispatch "GET" ["forward"] = do
+            -- app <- getYesod
+            render <- getUrlRender
+            let verUrl = render StaticR "/auth/page/oidc/callback" -- or use the callbackUrl definition from above?
+            -- $logInfo verUrl
             url <- liftIO $ getAuthUrl oidc "http://localhost:3000/auth/page/oidc/callback" Nothing
             redirect $ urlToString url
 
