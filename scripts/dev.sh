@@ -8,7 +8,7 @@ echo "Vault CLI version: $(vault --version)"
 
 export VAULT_ADDR="https://vault.adeo.no"
 SECRETS=$(vault read kv/preprod/fss/repo-tools/default -format=json) ||
-    (echo "Please login to Vault, and try again: VAULT_ADDR=$VAULT_ADDR vault login -method=oidc" && exit 1)
+    (echo -e "Please login to Vault, and try again:\n\nVAULT_ADDR=$VAULT_ADDR vault login -method=oidc\n" && exit 1)
 
 export GITHUB_APP_PRIVATE_KEY=$(echo $SECRETS | jq ".data.GITHUB_APP_PRIVATE_KEY" -r)
 export OIDC_CLIENT_ID=$(echo $SECRETS | jq ".data.OIDC_CLIENT_ID" -r)
