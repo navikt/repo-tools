@@ -6,6 +6,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Auth.Oidc where
 
@@ -33,39 +34,50 @@ getAuthUrl oidc redirectUrl prompt =
         state = Just ""
         extraParams = [("nonce", Just "somenonce"), ("response_mode", Just "form_post"), ("prompt", prompt)]
 
-loginUrl :: Route Auth
+loginUrl :: AuthRoute
 loginUrl = PluginR "oidc" ["forward"]
 callbackUrl :: AuthRoute
 callbackUrl = PluginR "oidc" ["callback"]
 
-authOidc :: YesodAuth master
+authOidc :: forall master. YesodAuth master
     => O.OIDC
     -> AuthPlugin master
 authOidc oidc =
     AuthPlugin "oidc" dispatch login
       where
-        dispatch :: YesodAuth site
-                 => Text
-                 -> [Text]
-                 -> AuthHandler site TypedContent
+        dispatch
+              :: ( MonadHandler m
+                 , master ~ HandlerSite m
+                 , Auth ~ SubHandlerSite m
+                 )
+              => Text
+              -> [Text]
+              -> m TypedContent
         dispatch "GET" ["forward"] = do
-            url <- liftIO $ getAuthUrl oidc "http://localhost:3000/auth/page/oidc/callback" Nothing
+            r <- getUrlRender
+            tm <- getRouteToParent
+            let callbackEncoded = encodeUtf8 $ r $ tm $ callbackUrl
+
+            url <- liftIO $ getAuthUrl oidc callbackEncoded Nothing
             redirect $ urlToString url
 
         dispatch "POST" ["callback"] = do
             mgr <- authHttpManager
             errorCode <- lookupPostParam "error"
+            r <- getUrlRender
+            tm <- getRouteToParent
+            let callbackEncoded = encodeUtf8 $ r $ tm $ callbackUrl
             case errorCode of
                 Just ec -> (do
                     maybeMsg <- lookupPostParam "error_description"
                     $logError $ fromJust maybeMsg
-                    url <- liftIO $ getAuthUrl oidc "http://localhost:3000/auth/page/oidc/callback" (Just "login")
+                    url <- liftIO $ getAuthUrl oidc callbackEncoded (Just "login")
                     redirect $ urlToString url)
                 Nothing -> do
                     code <- lookupPostParam "code"
                     case code of
                         Just c -> do
-                            let updatedOidc = oidc { S.oidcRedirectUri = "http://localhost:3000/auth/page/oidc/callback" }
+                            let updatedOidc = oidc { S.oidcRedirectUri = callbackEncoded }
                             tokens <- liftIO $ O.requestTokens updatedOidc (Data.Text.Encoding.encodeUtf8 c) mgr
                             -- let cl = claims $ idToken tokens
                             -- liftIO $ print tokens
