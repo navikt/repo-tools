@@ -5,6 +5,8 @@ RUN apt-get -y update && apt-get -y install \
   ca-certificates \
   curl
 
+COPY webproxy.crt /usr/local/share/ca-certificates/
+
 RUN mkdir -p /opt/app
 
 WORKDIR /opt/app
