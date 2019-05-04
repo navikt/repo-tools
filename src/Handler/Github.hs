@@ -53,7 +53,7 @@ getTeamsR :: Handler Value
 getTeamsR = do
     _ <- requireAuthId
     app <- getYesod
-    result <- liftIO $ (makeGithubApiRequest app "GET" "orgs/navikt/teams" (Nothing :: Maybe String) :: IO (Either String (Response [Team])))
+    result <- liftIO $ (makeGithubApiRequest app "GET" "orgs/navikt/teams?per_page=100" (Nothing :: Maybe String) :: IO (Either String (Response [Team])))
     case result of
         Right response -> do
             returnJson $ getResponseBody $ response
