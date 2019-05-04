@@ -79,7 +79,9 @@ authOidc oidc =
                         Just c -> do
                             let updatedOidc = oidc { S.oidcRedirectUri = callbackEncoded }
                             tokens <- liftIO $ O.requestTokens updatedOidc (Data.Text.Encoding.encodeUtf8 c) mgr
-                            -- let cl = claims $ idToken tokens
+                            let cl = O.claims $ O.idToken tokens
+                            -- $logInfo $ Data.Text.pack $ "tokens: " ++ show tokens
+                            $logInfo "Got JWT token, the login was valid."
                             -- liftIO $ print tokens
                             -- liftIO $ print . O.claims . O.idToken $ tokens
                             -- $logInfo ((Data.Text.pack "Issuer: ") `Data.Text.append` (iss cl))
