@@ -25,6 +25,8 @@ ip-from-header: "_env:YESOD_IP_FROM_HEADER:false"
 # mutable-static: false
 # skip-combining: false
 
+session-key-path: "_env:SESSION_KEY_PATH:config/client_session_key.aes"
+
 oidc-discovery-url: "_env:OIDC_DISCOVERY_URL:unknown"
 oidc-client-id: "_env:OIDC_CLIENT_ID:unknown"
 oidc-client-secret: "_env:OIDC_CLIENT_SECRET:unknown"

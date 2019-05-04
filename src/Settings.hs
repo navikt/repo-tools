@@ -50,6 +50,8 @@ data AppSettings = AppSettings
     , appSkipCombining          :: Bool
     -- ^ Perform no stylesheet/script combining
 
+    , sessionKeyPath :: FilePath
+
     , oidcDiscoveryUrl :: String
     , oidcClientId :: String
     , oidcClientSecret :: String
@@ -80,6 +82,8 @@ instance FromJSON AppSettings where
         appReloadTemplates        <- o .:? "reload-templates" .!= dev
         appMutableStatic          <- o .:? "mutable-static"   .!= dev
         appSkipCombining          <- o .:? "skip-combining"   .!= dev
+
+        sessionKeyPath <- o .: "session-key-path"
 
         oidcDiscoveryUrl <- o .: "oidc-discovery-url"
         oidcClientId <- o .: "oidc-client-id"
