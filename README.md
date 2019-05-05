@@ -1,8 +1,16 @@
 [![CircleCI](https://circleci.com/gh/navikt/repo-tools.svg?style=svg)](https://circleci.com/gh/navikt/repo-tools)
 
+[Image on Docker Hub](https://hub.docker.com/r/navikt/repo-tools/)
+
 # Repo Tools
 
 This project is a web application that is used by developers in NAV to manage GitHub repositories.
+
+### Access
+
+[https://repo-tools.nais.adeo.no](https://repo-tools.nais.adeo.no) (production)
+
+[https://repo-tools.nais.preprod.local](https://repo-tools.nais.preprod.local) (development)
 
 ### Technologies used:
 
