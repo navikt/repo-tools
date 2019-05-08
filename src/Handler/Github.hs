@@ -61,6 +61,20 @@ getMetaR = do
             returnJson $ plan $ getResponseBody $ response
         Left _ -> returnJson $ JsonError $ "Oops"
 
+getPrometheusR :: Handler TypedContent
+getPrometheusR = do
+    app <- getYesod
+    result <- liftIO $ (makeGithubApiRequest app "GET" "orgs/navikt" (Nothing :: Maybe String) :: IO (Either String (Response Organization)))
+    case result of
+        Right response -> do
+            let body = getResponseBody response
+                filled = show $ filled_seats $ plan body
+                total = show $ seats $ plan body
+            return $ TypedContent typePlain
+                    $ toContent ("github_seats{status=\"filled\",} " ++ filled ++ ".0\ngithub_seats{status=\"total\",} " ++ total ++ ".0\n" :: String)
+        Left _ -> return $ TypedContent typePlain
+                    $ toContent ("An error occured." :: String)
+
 getTeamsR :: Handler Value
 getTeamsR = do
     _ <- requireAuthId

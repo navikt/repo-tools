@@ -12,6 +12,7 @@
 /api/teams TeamsR GET
 /api/repo/create CreateRepoR POST
 /api/github/meta MetaR GET
+api/prometheus PrometheusR GET
 
 /auth AuthR Auth getAuth
 
