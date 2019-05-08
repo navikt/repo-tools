@@ -39,14 +39,26 @@ data Team = Team
 instance FromJSON Team
 instance ToJSON Team
 
+data Plan = Plan
+    { filled_seats :: Int
+    , seats :: Int
+    } deriving (Show, Generic)
+instance FromJSON Plan
+instance ToJSON Plan
+
+data Organization = Organization
+    { plan :: Plan
+    } deriving (Show, Generic)
+instance FromJSON Organization
+instance ToJSON Organization
+
 getMetaR :: Handler Value
 getMetaR = do
-    _ <- requireAuthId
     app <- getYesod
-    result <- liftIO $ (makeGithubApiRequest app "GET" "rate_limit" (Nothing :: Maybe String) :: IO (Either String (Response Value)))
+    result <- liftIO $ (makeGithubApiRequest app "GET" "orgs/navikt" (Nothing :: Maybe String) :: IO (Either String (Response Organization)))
     case result of
         Right response -> do
-            returnJson $ getResponseBody $ response
+            returnJson $ plan $ getResponseBody $ response
         Left _ -> returnJson $ JsonError $ "Oops"
 
 getTeamsR :: Handler Value
