@@ -150,7 +150,16 @@ let make = () => {
                   </div>
                 </div>
                 <div className="control">
-                  <button className="button is-link"> {str("Create repository")} </button>
+                  {
+                    let buttonText =
+                      if (state.status === Idle) {
+                        "Create repository";
+                      } else {
+                        "Waiting...";
+                      };
+                    let buttonDisabled = state.selectedTeam == None || state.status != Idle;
+                    <button className="button is-link" disabled=buttonDisabled> {str(buttonText)} </button>;
+                  }
                 </div>
               </div>;
             } else {

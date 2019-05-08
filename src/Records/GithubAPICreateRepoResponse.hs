@@ -16,7 +16,8 @@ import Import
 -- Lots of other fields as well in the response, but this is what we need for now
 data GithubAPICreateRepoResponse = GithubAPICreateRepoResponse
     { id :: Int
-    , full_name:: String
+    , full_name :: String
+    , html_url :: String
     } deriving (Show, Generic)
 
 instance FromJSON GithubAPICreateRepoResponse

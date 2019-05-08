@@ -10,10 +10,16 @@ type team = {
   description: option(string),
 };
 
+type createRepoResponse = {html_url: string};
+
 type teams =
   | NotLoaded
   | Loaded(list(team))
   | LoadFailed;
+
+type createRepoStatus =
+  | Idle
+  | Creating;
 
 type state = {
   visibility,
@@ -22,6 +28,7 @@ type state = {
   title: string,
   description: string,
   selectedTeam: option(string),
+  status: createRepoStatus,
 };
 
 type createRepo = {
@@ -43,6 +50,7 @@ let initialState = {
   title: "",
   description: "",
   selectedTeam: None,
+  status: Idle,
 };
 
 let isEverythingAccepted = accepted => List.for_all(item => Belt.Set.String.has(accepted, item), terms);
@@ -53,7 +61,9 @@ type action =
   | ToggleTermAccept(string, bool)
   | SetTitle(string)
   | SetDescription(string)
-  | SetSelectedTeam(string);
+  | SetSelectedTeam(string)
+  | CreatingRepo
+  | RepoCreated;
 
 let reducer = (state: state, action: action) => {
   switch (action) {
@@ -71,6 +81,8 @@ let reducer = (state: state, action: action) => {
   | SetTitle(title) => {...state, title}
   | SetDescription(description) => {...state, description}
   | SetSelectedTeam(selectedTeam) => {...state, selectedTeam: Some(selectedTeam)}
+  | CreatingRepo => {...state, status: Creating}
+  | RepoCreated => initialState
   };
 };
 
@@ -83,6 +95,8 @@ module Decode = {
       description: optional(field("description", string), team),
     };
   let teams = (json): list(team) => Json.Decode.list(team, json);
+
+  let createRepoResponse = repoResponse => Json.Decode.{html_url: field("html_url", string, repoResponse)};
 };
 
 module Encode = {

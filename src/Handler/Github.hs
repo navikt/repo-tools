@@ -89,6 +89,7 @@ postCreateRepoR = do
                     $logInfo $ Import.pack $ show response2
                     returnJson AR.APICreateRepoResponse {
                         AR.message = "OK"
+                        , AR.html_url = GR.html_url responseBody
                     }
                 Left _ -> returnJson $ JsonError $ "Could not assign owner"
         Left _ -> returnJson $ JsonError $ "Could not create repository"

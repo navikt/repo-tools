@@ -15,6 +15,7 @@ import Import
 
 data APICreateRepoResponse = APICreateRepoResponse
     { message :: String
+    , html_url :: String
     } deriving (Show, Generic)
 
 instance ToJSON APICreateRepoResponse

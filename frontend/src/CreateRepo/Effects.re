@@ -23,7 +23,14 @@ let fetchTeams = (dispatch: action => unit) => {
   ();
 };
 
+let redirect: string => unit = [%bs.raw {|
+ function (url) {
+   window.location = url;
+ }
+|}];
+
 let createRepo = (data: createRepo, dispatch: action => unit) => {
+  dispatch(CreatingRepo);
   Js.Promise.(
     Fetch.fetchWithInit(
       "/api/repo/create",
@@ -34,6 +41,22 @@ let createRepo = (data: createRepo, dispatch: action => unit) => {
         (),
       ),
     )
+    |> then_(Fetch.Response.json)
+    |> then_(json =>
+         json
+         |> Decode.createRepoResponse
+         |> (
+           repo => {
+             dispatch(RepoCreated);
+             redirect(repo.html_url);
+             resolve(None);
+           }
+         )
+       )
+    |> catch(_err => {
+         Js.log(_err);
+         resolve(None);
+       })
   );
   ();
 };
