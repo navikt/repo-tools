@@ -1,0 +1,47 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: repo-tools
+  namespace: default
+  labels:
+    team: aura
+spec:
+  image: navikt/repo-tools:@@version@@
+  port: 3000
+  team: aura
+  liveness:
+    path: /api/isAlive
+    initialDelay: 5
+    timeout: 1
+    periodSeconds: 10
+    failureThreshold: 3
+  readiness:
+    path: /api/isReady
+    initialDelay: 5
+    timeout: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  replicas:
+    min: 2
+    max: 3
+    cpuThresholdPercentage: 90
+  prometheus:
+      enabled: true
+      path: /api/prometheus
+  ingresses:
+    - "https://repo-tools.nais.adeo.no"
+  secrets: true
+  vault:
+    enabled: true
+    paths:
+    - kvPath: /kv/prod/fss/repo-tools/default
+      mountPath: /opt/app/secrets
+  webproxy: true
+  env:
+  - name: SESSION_KEY_PATH
+    value: "/opt/app/config/client_session_key.aes"
