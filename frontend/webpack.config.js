@@ -11,12 +11,13 @@ module.exports = {
   mode: isProd ? 'production' : 'development',
   output: {
     path: outputDir,
-    filename: 'Index.js'
+    filename: 'Index.[contenthash].js',
+    publicPath: '/static'
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/index.html',
-      inject: false
+      inject: true
     }),
     new CopyPlugin([
         { from: 'src/bulma.css', to: 'bulma.css' }
