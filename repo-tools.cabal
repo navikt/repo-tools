@@ -26,8 +26,10 @@ library
       Foundation
       GithubClient
       Records.GithubAPIRepoPermissionRequest
+      Records.GithubAPICreateFileRequest
       Records.GithubAPICreateRepoRequest
       Records.GithubAPICreateRepoResponse
+      Records.GithubAPIGetTeamResponse
       Records.APICreateRepoResponse
       Records.APICreateRepoRequest
       Handler.Common
@@ -48,6 +50,7 @@ library
       aeson >=1.4 && <1.5
     , base >=4.9.1.0 && <5
     , bytestring >=0.10.2 && <0.11
+    , base64-bytestring
     , case-insensitive
     , classy-prelude >=1.5 && <1.6
     , classy-prelude-conduit >=1.5 && <1.6
@@ -111,6 +114,7 @@ executable repo-tools
       aeson >=1.4 && <1.5
     , base >=4.9.1.0 && <5
     , bytestring >=0.10.2 && <0.11
+    , base64-bytestring
     , case-insensitive
     , classy-prelude >=1.5 && <1.6
     , classy-prelude-conduit >=1.5 && <1.6
@@ -175,6 +179,7 @@ test-suite repo-tools-test
       aeson >=1.4 && <1.5
     , base >=4.9.1.0 && <5
     , bytestring >=0.10.2 && <0.11
+    , base64-bytestring
     , case-insensitive
     , classy-prelude >=1.5 && <1.6
     , classy-prelude-conduit >=1.5 && <1.6

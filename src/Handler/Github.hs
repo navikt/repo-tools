@@ -18,11 +18,16 @@ import Handler.Api
 
 import Records.GithubAPIRepoPermissionRequest as RP
 import Records.GithubAPICreateRepoRequest as G
+import Records.GithubAPICreateFileRequest as GF
 import Records.GithubAPICreateRepoResponse as GR
 import Records.APICreateRepoRequest as A
 import Records.APICreateRepoResponse as AR
+import Records.GithubAPIGetTeamResponse as GGT
 
+import qualified Data.ByteString as B
 import Data.ByteString.Lazy
+import qualified Data.ByteString.Lazy.Char8 as Char8
+import qualified Data.ByteString.Base64.Lazy as Base64
 
 import Yesod
 import Yesod.Auth
@@ -85,6 +90,12 @@ getTeamsR = do
             returnJson $ getResponseBody $ response
         Left _ -> returnJson $ JsonError $ "Oops"
 
+codeowners :: String -> String
+codeowners slug = "* @navikt/" ++ slug
+
+base64Encode :: String -> String
+base64Encode input = Char8.unpack $ Base64.encode $ Char8.pack input
+
 postCreateRepoR :: Handler Value
 postCreateRepoR = do
     _ <- requireAuthId
@@ -113,6 +124,15 @@ postCreateRepoR = do
             case result2 of
                 Right response2 -> do
                     $logInfo $ Import.pack $ show response2
+                    result3 <- liftIO $ (makeGithubApiRequest app "GET" ("teams/" ++ A.owner body) (Nothing :: Maybe String) :: IO (Either String (Response GithubAPIGetTeamResponse)))
+                    case result3 of
+                        Right response3 -> do
+                            _ <- liftIO $ (makeGithubApiRequest app "PUT" ("repos/" ++ fullName ++ "/contents/CODEOWNERS") (Just GF.GithubAPICreateFileRequest
+                                 { GF.content = base64Encode $ codeowners $ GGT.slug $ getResponseBody response3
+                                 , GF.message = "Add CODEOWNERS file"
+                                 }) :: IO (Either String (Response Value)))
+                            return ()
+
                     returnJson AR.APICreateRepoResponse {
                         AR.message = "OK"
                         , AR.html_url = GR.html_url responseBody
