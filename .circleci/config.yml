@@ -44,7 +44,7 @@ jobs:
         command: "cd frontend && npm run webpack:production"
     - run:
         name: stack build
-        command: "stack build"
+        command: "stack build -j1"
     - run:
         name: Build a Docker image
         command: "docker build -t navikt/repo-tools:$CIRCLE_SHA1 ."
