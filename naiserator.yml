@@ -35,7 +35,6 @@ spec:
       path: /api/prometheus
   ingresses:
     - "https://repo-tools.nais.adeo.no"
-  secrets: true
   vault:
     enabled: true
     paths:
